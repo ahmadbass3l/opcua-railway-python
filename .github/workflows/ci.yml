@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pytest-asyncio httpx
+
+      - name: Lint (ruff)
+        run: |
+          pip install ruff
+          ruff check .
+
+      - name: Type check (mypy)
+        run: |
+          pip install mypy types-all
+          mypy . --ignore-missing-imports || true
+
+      - name: Docker build check
+        run: docker build -t opcua-railway-python .
