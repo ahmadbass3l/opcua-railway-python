@@ -1,0 +1,60 @@
+version: "3.9"
+
+# Runs TimescaleDB + both microservice implementations side-by-side.
+# Python service  → http://localhost:8080
+# Go service      → http://localhost:8081
+# TimescaleDB     → localhost:5432
+
+services:
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    environment:
+      POSTGRES_USER:     railway
+      POSTGRES_PASSWORD: railway
+      POSTGRES_DB:       railway
+    volumes:
+      - timescale-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U railway -d railway"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  python-service:
+    build:
+      context: ../opcua-railway-python
+    environment:
+      OPCUA_ENDPOINT:    opc.tcp://host.docker.internal:4840   # point at real hardware IP
+      OPCUA_NODE_IDS:    "ns=2;i=1001,ns=2;i=1002,ns=2;i=1003"
+      OPCUA_INTERVAL_MS: "500"
+      DB_DSN:            postgresql://railway:railway@timescaledb:5432/railway
+      PORT:              "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    restart: on-failure
+
+  go-service:
+    build:
+      context: ../opcua-railway-go
+    environment:
+      OPCUA_ENDPOINT:    opc.tcp://host.docker.internal:4840
+      OPCUA_NODE_IDS:    "ns=2;i=1001,ns=2;i=1002,ns=2;i=1003"
+      OPCUA_INTERVAL_MS: "500"
+      DB_DSN:            postgresql://railway:railway@timescaledb:5432/railway
+      PORT:              "8081"
+    ports:
+      - "8081:8081"
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  timescale-data:
