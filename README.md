@@ -125,3 +125,20 @@ See [`db/init.sql`](https://github.com/ahmadbass3l/opcua-railway-python/blob/mai
 ## License
 
 MIT
+
+---
+
+## Based on open standards and open-source
+
+This project is a **general-purpose template** implementing the publicly available
+**OPC UA standard (IEC 62541)**. It is built entirely from open-source libraries
+and public documentation — no proprietary data, internal systems, or employer
+resources were used.
+
+It is intended as a starting point that can be adapted for specific use cases
+before deployment in production. It is not affiliated with, derived from, or
+endorsed by any company or commercial product.
+
+See [NOTICE.md](./NOTICE.md) for the full list of standards, libraries, public
+documentation sources, and an explicit disclaimer of affiliation.
+
