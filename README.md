@@ -1,10 +1,10 @@
-# opcua-railway-python
+# opcua-python
 
-Railway sensor telemetry microservice — **Python** implementation.
+OPCUA sensor telemetry microservice — **Python** implementation.
 
-Connects to an OPC UA server on railway hardware, subscribes to sensor nodes, streams live data to browsers via **Server-Sent Events**, and persists readings to **TimescaleDB**.
+Connects to an OPC UA server on OPCUA hardware, subscribes to sensor nodes, streams live data to browsers via **Server-Sent Events**, and persists readings to **TimescaleDB**.
 
-> See the companion [Go implementation](https://github.com/ahmadbass3l/opcua-railway-go) for an identical API in Go.
+> See the companion [Go implementation](https://github.com/ahmadbass3l/opcua-OPCUA-go) for an identical API in Go.
 
 ---
 
@@ -45,8 +45,8 @@ data: {"sensor_id":"rail_temp_1","node_id":"ns=2;i=1001","value":42.3,"unit":"°
 ### Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/ahmadbass3l/opcua-railway-python.git
-cd opcua-railway-python
+git clone https://github.com/ahmadbass3l/opcua-OPCUA-python.git
+cd opcua-OPCUA-python
 cp .env.example .env          # edit OPCUA_ENDPOINT and OPCUA_NODE_IDS
 docker compose up
 ```
@@ -59,7 +59,7 @@ The compose file starts TimescaleDB and this service together.
 pip install -r requirements.txt
 export OPCUA_ENDPOINT=opc.tcp://192.168.1.100:4840
 export OPCUA_NODE_IDS="ns=2;i=1001,ns=2;i=1002"
-export DB_DSN=postgresql://railway:railway@localhost:5432/railway
+export DB_DSN=postgresql://OPCUA:OPCUA@localhost:5432/OPCUA
 python main.py
 ```
 
@@ -72,7 +72,7 @@ python main.py
 | `OPCUA_ENDPOINT` | `opc.tcp://localhost:4840` | OPC UA server on the hardware |
 | `OPCUA_NODE_IDS` | `ns=2;i=1001,...` | Comma-separated NodeIds to subscribe to |
 | `OPCUA_INTERVAL_MS` | `500` | Subscription publishing interval (ms) |
-| `DB_DSN` | `postgresql://railway:railway@localhost:5432/railway` | TimescaleDB connection string |
+| `DB_DSN` | `postgresql://OPCUA:OPCUA@localhost:5432/OPCUA` | TimescaleDB connection string |
 | `PORT` | `8080` | HTTP server port |
 
 ---
@@ -80,7 +80,7 @@ python main.py
 ## File layout
 
 ```
-opcua-railway-python/
+opcua-OPCUA-python/
 ├── main.py           # FastAPI app, routes, lifespan
 ├── opcua_client.py   # asyncua connect + subscribe + DataChangeHandler
 ├── sse.py            # SSEBroker: fan-out asyncio.Queue per client
@@ -118,7 +118,7 @@ opcua-railway-python/
 
 ## Database schema
 
-See [`db/init.sql`](https://github.com/ahmadbass3l/opcua-railway-python/blob/main/db/init.sql) — creates the `sensor_readings` hypertable and `readings_1min` continuous aggregate.
+See [`db/init.sql`](https://github.com/ahmadbass3l/opcua-OPCUA-python/blob/main/db/init.sql) — creates the `sensor_readings` hypertable and `readings_1min` continuous aggregate.
 
 ---
 
